@@ -1,0 +1,70 @@
+#define humanHotSensor 4 //人体红外
+#define buzzer 2 //定义蜂鸣器
+#define A4 349
+#define A5 392
+#define A6 440
+#define A7 494
+#define B1 523
+#define B2 587
+#define B3 659
+#define B4 698
+#define B5 784
+#define B6 880
+#define B7 988
+#define C1 1046
+#define OX 50000
+#define D0 0.125
+#define D1 0.25
+#define D2 0.5
+#define D3 0.75
+#define D4 1.75 //以上为音符定义和长度定义
+#include <U8glib.h>
+int hh=0;
+U8GLIB_SSD1306_128X64 u8g(U8G_I2C_OPT_NONE); //显示屏
+#define ziti1 u8g.setFont(u8g_font_7x13)
+int tune[]={A6,OX,B3,OX,A7,B2,B1,A7,A6,OX,A6,A6,A7,B1,A7,A5,A6,OX,A6,OX,B3,OX,B1,B2,B3,B5,B3,OX,A6,A7,B1,B2,A7,B1,A7,A6,A5,A6,OX,B1,B1,B1,B1,B5,B5,OX,B5,B6,B3,B3,B3,B3,B3,B3,OX,B3,B1,B1,B1,B1,B5,B5,OX,B6,B7,B3,B3,B3,B3,B3,B3,OX,B3,B4,B4,B4,B4,B1,A7,OX,B3,B3,B3,B3,A7,A6,OX,A4,A6,B1,B4,B3,C1,B7,B6,B7,OX,B3,B3,B3,B3,OX}; //乐谱
+float duration[]={D1,D3,D1,D3,D1,D1,D1,D1,D1,D3,D1,D1,D1,D1,D2,D2,D1,D4,D1,D3,D1,D3,D1,D1,D1,D1,D1,D3,D1,D1,D1,D1,D1,D0,D0,D1,D1,D1,D4,D1,D0,D0,D1,D1,D1,D1,D1,D1,D1,D0,D0,D1,D1,D1,D3,D1,D1,D0,D0,D1,D1,D1,D1,D1,D1,D1,D0,D0,D1,D1,D1,D2,D1,D1,D0,D0,D1,D1,D2,D2,D1,D0,D0,D1,D1,D2,D2,D1,D1,D1,D1,D1,D1,D1,D1,D2,D1,D0,D0,D2,D2}; //音符持续长度
+int len;
+void setup()
+{
+Serial.begin(9600);
+pinMode(humanHotSensor, INPUT);
+pinMode(buzzer,OUTPUT);
+len=sizeof(tune);
+Serial.print(len);
+}
+void loop(){
+hh=digitalRead(humanHotSensor);
+Serial.println(hh);
+if (hh==1)
+{
+u8g.firstPage();
+do
+{
+ziti1;
+u8g.setPrintPos(10, 30);
+u8g.print("haha!!!");
+u8g.setPrintPos(10, 40);
+u8g.print("You are cheated!!!");
+}
+while( u8g.nextPage() );
+for(int x=0; x<100; x++)
+{
+tone(buzzer, tune[x]);
+delay(800*duration[x]);
+noTone(buzzer);
+}
+tone(buzzer,50000);
+delay(500);
+}
+else
+{
+u8g.firstPage();
+do {
+ziti1;
+u8g.drawStr(10,30,"Come on!");
+u8g.drawStr(10,40,"Come here!");
+}
+while( u8g.nextPage() );
+}
+}
